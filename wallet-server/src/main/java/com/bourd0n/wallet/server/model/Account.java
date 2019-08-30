@@ -15,9 +15,9 @@ import java.util.Objects;
 @Table(name = "accounts")
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private BigInteger id;
+    private long id;
     @Column(name = "amount")
     private BigDecimal amount;
     @Column(name = "currency_code")
@@ -46,7 +46,7 @@ public class Account {
         this.amount = amount;
     }
 
-    public BigInteger getId() {
+    public long getId() {
         return id;
     }
 
@@ -54,7 +54,7 @@ public class Account {
         return amount;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(long id) {
         this.id = id;
     }
 

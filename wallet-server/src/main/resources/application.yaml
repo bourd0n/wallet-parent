@@ -1,5 +1,17 @@
 spring:
   application:
     name: wallet-server
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+#  todo: move to profile
+  datasource:
+    url: jdbc:h2:mem:testdb
+  h2:
+    console:
+      enabled: true
+
 grpc:
   port: 8081

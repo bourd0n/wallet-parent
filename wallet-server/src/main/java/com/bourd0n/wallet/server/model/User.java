@@ -8,20 +8,21 @@ import java.util.Set;
 @Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private BigInteger id;
-    @OneToMany(mappedBy="user")
+    private long id;
+    //todo: use map
+    @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
     private Set<Account> accounts;
 
     public User() {
     }
 
-    public BigInteger getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -1,0 +1,16 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.bourd0n.wallet.api.grpc;
+import "google/protobuf/empty.proto";
+
+message CreateUserRequest {
+    map<string, double> moneyAmount = 1;
+}
+
+message CreateUserResponse {
+    int64 userId = 1;
+}
+
+service UserService {
+    rpc createUser (CreateUserRequest) returns (CreateUserResponse);
+}

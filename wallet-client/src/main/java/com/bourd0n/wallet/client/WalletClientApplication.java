@@ -10,26 +10,32 @@ public class WalletClientApplication {
                 .usePlaintext()
                 .build();
 
+        UserServiceGrpc.UserServiceBlockingStub userServiceStub = UserServiceGrpc.newBlockingStub(channel);
+
+        CreateUserResponse user = userServiceStub.createUser(CreateUserRequest.newBuilder()
+                .putMoneyAmount(CurrencyType.EUR.name(), 100.0)
+                .build());
+
         DepositServiceGrpc.DepositServiceBlockingStub depositStub = DepositServiceGrpc.newBlockingStub(channel);
 
         depositStub.deposit(MoneyRequest.newBuilder()
-                .setAmount(1000)
-                .setUserId("userId")
+                .setAmount(2000)
+                .setUserId(user.getUserId())
                 .setCurrency(CurrencyType.EUR)
                 .build());
 
         WithdrawServiceGrpc.WithdrawServiceBlockingStub withdrawStub = WithdrawServiceGrpc.newBlockingStub(channel);
 
         withdrawStub.withdraw(MoneyRequest.newBuilder()
-                .setAmount(100)
-                .setUserId("userId")
+                .setAmount(500)
+                .setUserId(user.getUserId())
                 .setCurrency(CurrencyType.EUR)
                 .build());
 
         BalanceServiceGrpc.BalanceServiceBlockingStub balanceStub = BalanceServiceGrpc.newBlockingStub(channel);
 
         BalanceResponse balanceResponse = balanceStub.balance(BalanceRequest.newBuilder()
-                .setUserId("userId")
+                .setUserId(user.getUserId())
                 .build());
 
         System.out.println(balanceResponse);
