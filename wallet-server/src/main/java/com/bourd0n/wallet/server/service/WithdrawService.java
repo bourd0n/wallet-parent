@@ -39,7 +39,7 @@ public class WithdrawService extends WithdrawServiceGrpc.WithdrawServiceImplBase
                 .filter(a -> a.getCurrencyCode().equals(request.getCurrency().name()))
                 .findFirst()
                 //lock
-                .flatMap(a -> accountRepository.lock(a.getId()))
+                .flatMap(a -> accountRepository.lockForWrite(a.getId()))
                 //todo: exception
                 .orElseThrow(RuntimeException::new);
 

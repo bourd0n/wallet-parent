@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends CrudRepository<Account, Long> {
-    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT a FROM Account a WHERE a.id = ?1")
-    Optional<Account> lock(Long id);
+    Optional<Account> lockForWrite(Long id);
 }
