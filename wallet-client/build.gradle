@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'com.bourd0n.wallet'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    grpcVersion = '1.23.0'
+}
+
+dependencies {
+    implementation project(':wallet-api')
+    implementation group: 'io.grpc', name: 'grpc-netty', version: "${grpcVersion}"
+    implementation group: 'io.grpc', name: 'grpc-protobuf', version: "${grpcVersion}"
+    implementation group: 'io.grpc', name: 'grpc-stub', version: "${grpcVersion}"
+    implementation group: 'io.grpc', name: 'grpc-services', version: "${grpcVersion}"
+    implementation group: 'io.grpc', name: 'grpc-api', version: "${grpcVersion}"
+}

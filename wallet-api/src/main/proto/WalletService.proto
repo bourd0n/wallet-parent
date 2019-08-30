@@ -1,0 +1,37 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.bourd0n.wallet.api.grpc;
+import "google/protobuf/empty.proto";
+
+enum CurrencyType {
+    EUR = 0;
+    USD = 1;
+    GBP = 2;
+}
+
+message MoneyRequest {
+    string userId = 1;
+    double amount = 2;
+    CurrencyType currency = 3;
+}
+
+message BalanceRequest {
+    string userId = 1;
+}
+
+message BalanceResponse {
+    map<string, double> moneyAmount = 1;
+}
+
+//todo: make one service
+service DepositService {
+    rpc deposit (MoneyRequest) returns (google.protobuf.Empty);
+}
+
+service WithdrawService {
+    rpc withdraw (MoneyRequest) returns (google.protobuf.Empty);
+}
+
+service BalanceService {
+    rpc balance (BalanceRequest) returns (BalanceResponse);
+}

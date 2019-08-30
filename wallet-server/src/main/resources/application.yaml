@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: wallet-server
+grpc:
+  port: 8081

@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+}
+
+group 'com.bourd0n.wallet'
+version '1.0-SNAPSHOT'
+
+// allprojects {
+//     repositories {
+//         mavenCentral()
+// //        maven {
+// //            url "http://nexus.sigma.sbrf.ru:8099/nexus/content/repositories/gradle_plugins_proxy"
+// //        }
+// //        maven {
+// //            url "http://nexus.sigma.sbrf.ru:8099/nexus/content/repositories/central"
+// //        }
+//     }
+// }
+
+sourceCompatibility = 1.8
+
+
+//todo: solve problem
+//subprojects {
+//    ext {
+//        grpcVersion = '1.23.0'
+//    }
+//
+//    dependencies {
+//        compileOnly group: 'io.grpc', name: 'grpc-netty', version: "${grpcVersion}"
+//        compileOnly group: 'io.grpc', name: 'grpc-protobuf', version: "${grpcVersion}"
+//        compileOnly group: 'io.grpc', name: 'grpc-stub', version: "${grpcVersion}"
+//        compileOnly group: 'io.grpc', name: 'grpc-services', version: "${grpcVersion}"
+//    }
+//
+//}
+
+

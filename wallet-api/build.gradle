@@ -1,0 +1,83 @@
+buildscript {
+    repositories {
+        // maven {
+        //     url "http://nexus.sigma.sbrf.ru:8099/nexus/content/repositories/gradle_plugins_proxy"
+        // }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.10"
+    }
+}
+
+plugins {
+    id 'java'
+    id "com.google.protobuf" version "0.8.10"
+}
+
+group 'com.bourd0n.wallet'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    // maven {
+    //     url "http://nexus.sigma.sbrf.ru:8099/nexus/content/repositories/gradle_plugins_proxy"
+    // }
+    mavenCentral()
+}
+
+ext {
+    grpcVersion = '1.23.0'
+}
+
+dependencies {
+    compileOnly group: 'io.grpc', name: 'grpc-netty', version: "${grpcVersion}"
+    compileOnly group: 'io.grpc', name: 'grpc-protobuf', version: "${grpcVersion}"
+    compileOnly group: 'io.grpc', name: 'grpc-stub', version: "${grpcVersion}"
+    compileOnly group: 'io.grpc', name: 'grpc-services', version: "${grpcVersion}"
+    compileOnly group: 'io.grpc', name: 'grpc-api', version: "${grpcVersion}"
+}
+
+
+sourceSets {
+    main {
+        proto {
+            srcDir 'src/main/proto'
+        }
+        java {
+            // include self written and generated code
+            srcDirs 'src/main/java', 'generated-sources/main/java', 'generated-sources/main/grpc'
+        }
+    }
+}
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.9.1'
+    }
+
+    //todo: remove from here
+    // Configure the codegen plugins
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.23.0'
+        }
+    }
+//todo: fix it
+    generateProtoTasks.generatedFilesBaseDir = 'generated-sources'
+//
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
