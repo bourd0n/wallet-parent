@@ -4,6 +4,7 @@ import com.bourd0n.wallet.api.grpc.BalanceRequest;
 import com.bourd0n.wallet.api.grpc.BalanceResponse;
 import com.bourd0n.wallet.api.grpc.MoneyRequest;
 import com.bourd0n.wallet.api.grpc.WalletServiceGrpc;
+import com.bourd0n.wallet.server.exception.AccountNotFoundException;
 import com.bourd0n.wallet.server.exception.InsufficientFundsException;
 import com.bourd0n.wallet.server.exception.UserNotFoundException;
 import com.bourd0n.wallet.server.model.Account;
@@ -45,15 +46,14 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
                     .findFirst()
                     //lock
                     .flatMap(a -> accountRepository.lockForWrite(a.getId()))
-                    //todo: exception
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(() -> new AccountNotFoundException(userId, request.getCurrency()));
 
             account.setAmount(account.getAmount().add(new BigDecimal(request.getAmount())));
             accountRepository.save(account);
 
             responseObserver.onNext(Empty.newBuilder().build());
             responseObserver.onCompleted();
-        } catch (IllegalArgumentException | UserNotFoundException e) {
+        } catch (IllegalArgumentException | UserNotFoundException | AccountNotFoundException e) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
@@ -78,8 +78,7 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
                     .findFirst()
                     //lock
                     .flatMap(a -> accountRepository.lockForWrite(a.getId()))
-                    //todo: exception
-                    .orElseThrow(RuntimeException::new);
+                    .orElseThrow(() -> new AccountNotFoundException(userId, request.getCurrency()));
 
             BigDecimal finalAmount = account.getAmount().subtract(new BigDecimal(request.getAmount()));
             if (finalAmount.compareTo(BigDecimal.ZERO) < 0) {
@@ -90,7 +89,7 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
 
             responseObserver.onNext(Empty.newBuilder().build());
             responseObserver.onCompleted();
-        } catch (IllegalArgumentException | UserNotFoundException e) {
+        } catch (IllegalArgumentException | UserNotFoundException | AccountNotFoundException e) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
