@@ -23,15 +23,8 @@ message BalanceResponse {
     map<string, double> moneyAmount = 1;
 }
 
-//todo: make one service
-service DepositService {
+service WalletService {
     rpc deposit (MoneyRequest) returns (google.protobuf.Empty);
-}
-
-service WithdrawService {
     rpc withdraw (MoneyRequest) returns (google.protobuf.Empty);
-}
-
-service BalanceService {
     rpc balance (BalanceRequest) returns (BalanceResponse);
 }

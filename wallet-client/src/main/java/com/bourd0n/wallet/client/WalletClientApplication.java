@@ -16,25 +16,21 @@ public class WalletClientApplication {
                 .putMoneyAmount(CurrencyType.EUR.name(), 100.0)
                 .build());
 
-        DepositServiceGrpc.DepositServiceBlockingStub depositStub = DepositServiceGrpc.newBlockingStub(channel);
+        WalletServiceGrpc.WalletServiceBlockingStub walletService = WalletServiceGrpc.newBlockingStub(channel);
 
-        depositStub.deposit(MoneyRequest.newBuilder()
+        walletService.deposit(MoneyRequest.newBuilder()
                 .setAmount(2000)
                 .setUserId(user.getUserId())
                 .setCurrency(CurrencyType.EUR)
                 .build());
 
-        WithdrawServiceGrpc.WithdrawServiceBlockingStub withdrawStub = WithdrawServiceGrpc.newBlockingStub(channel);
-
-        withdrawStub.withdraw(MoneyRequest.newBuilder()
+        walletService.withdraw(MoneyRequest.newBuilder()
                 .setAmount(500)
                 .setUserId(user.getUserId())
                 .setCurrency(CurrencyType.EUR)
                 .build());
 
-        BalanceServiceGrpc.BalanceServiceBlockingStub balanceStub = BalanceServiceGrpc.newBlockingStub(channel);
-
-        BalanceResponse balanceResponse = balanceStub.balance(BalanceRequest.newBuilder()
+        BalanceResponse balanceResponse = walletService.balance(BalanceRequest.newBuilder()
                 .setUserId(user.getUserId())
                 .build());
 
