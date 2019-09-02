@@ -1,5 +1,7 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'java'
+    id 'application'
 }
 
 group 'com.bourd0n.wallet'
@@ -9,6 +11,10 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClassName = 'com.bourd0n.wallet.client.WalletClientApplication'
 }
 
 ext {
@@ -22,4 +28,5 @@ dependencies {
     implementation group: 'io.grpc', name: 'grpc-stub', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-services', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-api', version: "${grpcVersion}"
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
 }
