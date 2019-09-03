@@ -1,10 +1,19 @@
 package com.bourd0n.wallet.client;
 
-import com.bourd0n.wallet.api.grpc.*;
+import com.bourd0n.wallet.api.grpc.CreateUserRequest;
+import com.bourd0n.wallet.api.grpc.CurrencyType;
+import com.bourd0n.wallet.api.grpc.UserServiceGrpc;
+import com.google.common.util.concurrent.Futures;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.commons.cli.*;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
+
+//todo: add logging
 public class WalletClientApplication {
 
     private static final Options OPTIONS = new Options();
@@ -56,7 +65,7 @@ public class WalletClientApplication {
         OPTIONS.addOption(ROUNDS_PER_THREAD);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd = null;
@@ -71,41 +80,34 @@ public class WalletClientApplication {
 
         //todo: typesafety
         String walletServerHost = cmd.getOptionValue(WALLET_SERVER_HOST.getOpt(), "localhost");
-        Integer walletServerPort = Integer.valueOf(cmd.getOptionValue(WALLET_SERVER_PORT.getOpt(), "8081"));
-        Integer numberOfUsers = Integer.valueOf(cmd.getOptionValue(NUMBER_OF_USERS.getOpt()));
-        Integer numberOfThreads = Integer.valueOf(cmd.getOptionValue(NUMBER_OF_THREADS.getOpt()));
-        Integer roundsPerThread = Integer.valueOf(cmd.getOptionValue(ROUNDS_PER_THREAD.getOpt()));
+        int walletServerPort = Integer.parseInt(cmd.getOptionValue(WALLET_SERVER_PORT.getOpt(), "8081"));
+        int numberOfUsers = Integer.parseInt(cmd.getOptionValue(NUMBER_OF_USERS.getOpt()));
+        int numberOfThreads = Integer.parseInt(cmd.getOptionValue(NUMBER_OF_THREADS.getOpt()));
+        int roundsPerThread = Integer.parseInt(cmd.getOptionValue(ROUNDS_PER_THREAD.getOpt()));
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress(walletServerHost, walletServerPort)
                 .usePlaintext()
                 .build();
 
-        UserServiceGrpc.UserServiceBlockingStub userServiceStub = UserServiceGrpc.newBlockingStub(channel);
+        UserServiceGrpc.UserServiceFutureStub userServiceStub = UserServiceGrpc.newFutureStub(channel);
 
-        CreateUserResponse user = userServiceStub.createUser(CreateUserRequest.newBuilder()
-                .putMoneyAmount(CurrencyType.EUR.name(), 100.0)
-                .build());
+        CreateUserRequest createUserRequest = CreateUserRequest.newBuilder()
+                .putMoneyAmount(CurrencyType.EUR.name(), 0.0)
+                .putMoneyAmount(CurrencyType.USD.name(), 0.0)
+                .putMoneyAmount(CurrencyType.GBP.name(), 0.0)
+                .build();
 
-        WalletServiceGrpc.WalletServiceBlockingStub walletService = WalletServiceGrpc.newBlockingStub(channel);
+        //todo: init
+        ExecutorService executorService = Executors.newFixedThreadPool((numberOfThreads + 1) * numberOfUsers);
 
-        walletService.deposit(MoneyRequest.newBuilder()
-                .setAmount(2000)
-                .setUserId(user.getUserId())
-                .setCurrency(CurrencyType.EUR)
-                .build());
+        CountDownLatch countDownLatch = new CountDownLatch(numberOfUsers);
+        IntStream.rangeClosed(1, numberOfUsers)
+                .mapToObj((i) -> userServiceStub.createUser(createUserRequest))
+                .forEach(f -> Futures.addCallback(f,
+                        new StartThreadsForUserCallback(numberOfThreads, roundsPerThread, executorService, channel, countDownLatch),
+                        executorService));
 
-        walletService.withdraw(MoneyRequest.newBuilder()
-                .setAmount(500)
-                .setUserId(user.getUserId())
-                .setCurrency(CurrencyType.EUR)
-                .build());
-
-        BalanceResponse balanceResponse = walletService.balance(BalanceRequest.newBuilder()
-                .setUserId(user.getUserId())
-                .build());
-
-        System.out.println(balanceResponse);
-
+        countDownLatch.await();
         channel.shutdown();
     }
 }
