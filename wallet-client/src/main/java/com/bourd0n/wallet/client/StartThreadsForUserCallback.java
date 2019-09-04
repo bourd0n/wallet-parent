@@ -51,7 +51,6 @@ public class StartThreadsForUserCallback implements FutureCallback<CreateUserRes
 
     @Override
     public void onFailure(Throwable t) {
-        //todo
-        t.printStackTrace();
+        LOGGER.error("StartThreadsForUserCallback failed with exception", t);
     }
 }

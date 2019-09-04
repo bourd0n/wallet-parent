@@ -13,7 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-//todo: add logging
 public class WalletClientApplication {
 
     private static final Options OPTIONS = new Options();
@@ -78,7 +77,6 @@ public class WalletClientApplication {
             System.exit(1);
         }
 
-        //todo: typesafety
         String walletServerHost = cmd.getOptionValue(WALLET_SERVER_HOST.getOpt(), "localhost");
         int walletServerPort = Integer.parseInt(cmd.getOptionValue(WALLET_SERVER_PORT.getOpt(), "8081"));
         int numberOfUsers = Integer.parseInt(cmd.getOptionValue(NUMBER_OF_USERS.getOpt()));
