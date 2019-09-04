@@ -93,6 +93,10 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
             responseObserver.onError(Status.INVALID_ARGUMENT.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
+        } catch (InsufficientFundsException e) {
+            responseObserver.onError(Status.FAILED_PRECONDITION.withCause(e)
+                    .withDescription(e.getMessage())
+                    .asRuntimeException());
         } catch (Exception e) {
             responseObserver.onError(Status.UNKNOWN.withCause(e)
                     .withDescription(e.getMessage())

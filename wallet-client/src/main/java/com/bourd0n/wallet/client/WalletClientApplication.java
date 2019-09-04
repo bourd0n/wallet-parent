@@ -97,7 +97,6 @@ public class WalletClientApplication {
                 .putMoneyAmount(CurrencyType.GBP.name(), 0.0)
                 .build();
 
-        //todo: init
         ExecutorService executorService = Executors.newFixedThreadPool((numberOfThreads + 1) * numberOfUsers);
 
         CountDownLatch countDownLatch = new CountDownLatch(numberOfUsers);
@@ -109,5 +108,6 @@ public class WalletClientApplication {
 
         countDownLatch.await();
         channel.shutdown();
+        System.exit(0);
     }
 }

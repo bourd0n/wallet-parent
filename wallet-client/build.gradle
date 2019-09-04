@@ -17,16 +17,24 @@ application {
     mainClassName = 'com.bourd0n.wallet.client.WalletClientApplication'
 }
 
+shadowJar {
+    mergeServiceFiles()
+}
+
+
 ext {
     grpcVersion = '1.23.0'
 }
 
 dependencies {
     implementation project(':wallet-api')
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     implementation group: 'io.grpc', name: 'grpc-netty', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-protobuf', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-stub', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-services', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-api', version: "${grpcVersion}"
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    implementation group: 'com.google.guava', name: 'guava', version: '28.1-jre'
 }

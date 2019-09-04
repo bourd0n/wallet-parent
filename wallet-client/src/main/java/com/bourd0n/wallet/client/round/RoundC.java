@@ -2,8 +2,13 @@ package com.bourd0n.wallet.client.round;
 
 import com.bourd0n.wallet.api.grpc.*;
 import io.grpc.ManagedChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RoundC implements Round {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoundB.class);
+
     @Override
     public void makeRound(ManagedChannel channel, long userId) {
         try {
@@ -50,9 +55,9 @@ public class RoundC implements Round {
             balanceResponse = walletService.balance(BalanceRequest.newBuilder()
                     .setUserId(userId)
                     .build());
+            LOGGER.info("User {}. RoundC finished ok", userId);
         } catch (Exception e) {
-            //todo
-            e.printStackTrace();
+            LOGGER.error("User {}. RoundC failed with message: {}", userId, e.getMessage());
         }
     }
 }

@@ -2,8 +2,12 @@ package com.bourd0n.wallet.client.round;
 
 import com.bourd0n.wallet.api.grpc.*;
 import io.grpc.ManagedChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RoundA implements Round {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoundA.class);
 
     @Override
     public void makeRound(ManagedChannel channel, long userId) {
@@ -47,9 +51,9 @@ public class RoundA implements Round {
                     .setUserId(userId)
                     .setCurrency(CurrencyType.USD)
                     .build());
+            LOGGER.info("User {}. RoundA finished ok", userId);
         } catch (Exception e) {
-            //todo
-            e.printStackTrace();
+            LOGGER.error("User {}. RoundA failed with message: {}", userId, e.getMessage());
         }
     }
 }

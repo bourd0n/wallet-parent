@@ -25,10 +25,6 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @Version
-    @Column(name = "version")
-    @JsonIgnore
-    private int version;
 
 
     private Account() {
@@ -78,14 +74,6 @@ public class Account {
         this.user = user;
     }
 
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
     @JsonIgnore
     public CurrencyUnit getCurrency() {
         return Monetary.getCurrency(currencyCode);
@@ -96,14 +84,12 @@ public class Account {
         return Money.of(amount, currencyCode);
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Account account = (Account) o;
-        return version == account.version &&
-                Objects.equals(id, account.id) &&
+        return id == account.id &&
                 Objects.equals(amount, account.amount) &&
                 Objects.equals(currencyCode, account.currencyCode) &&
                 Objects.equals(user, account.user);
@@ -111,7 +97,7 @@ public class Account {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, amount, currencyCode, user, version);
+        return Objects.hash(id, amount, currencyCode, user);
     }
 
     @Override
@@ -121,7 +107,6 @@ public class Account {
                 ", amount=" + amount +
                 ", currencyCode='" + currencyCode + '\'' +
                 ", user=" + user +
-                ", version=" + version +
                 '}';
     }
 }

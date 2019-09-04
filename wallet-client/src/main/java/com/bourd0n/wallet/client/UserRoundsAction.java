@@ -23,7 +23,6 @@ public class UserRoundsAction implements Supplier<Void> {
         this.userId = userId;
         this.roundsPerThread = roundsPerThread;
         this.channel = channel;
-        //todo: some injection
         this.availableRounds = Lists.newArrayList(new RoundA(), new RoundB(), new RoundC());
     }
 
