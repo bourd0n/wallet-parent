@@ -9,6 +9,8 @@ import com.bourd0n.wallet.server.model.User;
 import com.bourd0n.wallet.server.repository.UserRepository;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService extends UserServiceGrpc.UserServiceImplBase {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
 
@@ -33,6 +37,7 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
     public void createUser(CreateUserRequest request, StreamObserver<CreateUserResponse> responseObserver) {
         try {
             validateCreateUserRequest(request);
+            LOGGER.debug("Request for user create : '{}'", request);
             Map<String, Double> moneyAmount = request.getMoneyAmount();
             User user = new User();
             Set<Account> accounts = moneyAmount.entrySet().stream()
@@ -45,12 +50,15 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
                     .setUserId(user.getId())
                     .build());
 
+            LOGGER.info("User with id {} created", user.getId());
             responseObserver.onCompleted();
         } catch (IllegalArgumentException e) {
+            LOGGER.error("User create request '" + request + "' failed", e);
             responseObserver.onError(Status.INVALID_ARGUMENT.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
         } catch (Exception e) {
+            LOGGER.error("User create request '" + request + "' failed", e);
             responseObserver.onError(Status.UNKNOWN.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());

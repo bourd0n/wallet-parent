@@ -42,9 +42,7 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
 
     //logging
-    //better to configure log4j
-//    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-//    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 
     //hibernate
     implementation group: 'org.hibernate', name: 'hibernate-core', version: "${hibernateVersion}"
@@ -55,7 +53,7 @@ dependencies {
 
     //tests
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.11.1'
-    testImplementation group: 'io.grpc', name: 'grpc-testing', version: "${grpcVersion}"
+//    testImplementation group: 'io.grpc', name: 'grpc-testing', version: "${grpcVersion}"
 
     implementation group: 'io.grpc', name: 'grpc-netty', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-protobuf', version: "${grpcVersion}"

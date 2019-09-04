@@ -66,7 +66,7 @@ protobuf {
         }
     }
 //todo: fix it
-    generateProtoTasks.generatedFilesBaseDir = 'generated-sources'
+    generateProtoTasks.generatedFilesBaseDir = 'wallet-api/generated-sources'
 //
     generateProtoTasks {
         all()*.plugins {

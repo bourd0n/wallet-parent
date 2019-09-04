@@ -14,6 +14,8 @@ import com.bourd0n.wallet.server.repository.UserRepository;
 import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,8 @@ import java.math.BigDecimal;
 
 @Service
 public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WalletService.class);
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
@@ -36,6 +40,7 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
     @Transactional
     public void deposit(MoneyRequest request, StreamObserver<Empty> responseObserver) {
         try {
+            LOGGER.debug("Deposit request: {}", request);
             validateMoneyRequest(request);
             long userId = request.getUserId();
             Account account = userRepository.findById(userId)
@@ -51,13 +56,16 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
             account.setAmount(account.getAmount().add(new BigDecimal(request.getAmount())));
             accountRepository.save(account);
 
+            LOGGER.info("Deposit request successful: {}", request);
             responseObserver.onNext(Empty.newBuilder().build());
             responseObserver.onCompleted();
         } catch (IllegalArgumentException | UserNotFoundException | AccountNotFoundException e) {
+            LOGGER.error("Deposit request '" + request + "' failed", e);
             responseObserver.onError(Status.INVALID_ARGUMENT.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
         } catch (Exception e) {
+            LOGGER.error("Deposit request '" + request + "' failed", e);
             responseObserver.onError(Status.UNKNOWN.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
@@ -68,6 +76,7 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
     @Transactional
     public void withdraw(MoneyRequest request, StreamObserver<Empty> responseObserver) {
         try {
+            LOGGER.debug("Withdraw request: {}", request);
             validateMoneyRequest(request);
             long userId = request.getUserId();
             Account account = userRepository.findById(userId)
@@ -87,6 +96,7 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
             account.setAmount(finalAmount);
             accountRepository.save(account);
 
+            LOGGER.info("Withdraw request successful: {}", request);
             responseObserver.onNext(Empty.newBuilder().build());
             responseObserver.onCompleted();
         } catch (IllegalArgumentException | UserNotFoundException | AccountNotFoundException e) {
@@ -94,10 +104,12 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
                     .withDescription(e.getMessage())
                     .asRuntimeException());
         } catch (InsufficientFundsException e) {
+            LOGGER.error("Withdraw request '" + request + "' failed", e);
             responseObserver.onError(Status.FAILED_PRECONDITION.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
         } catch (Exception e) {
+            LOGGER.error("Withdraw request '" + request + "' failed", e);
             responseObserver.onError(Status.UNKNOWN.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
@@ -108,6 +120,7 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
     @Transactional
     public void balance(BalanceRequest request, StreamObserver<BalanceResponse> responseObserver) {
         try {
+            LOGGER.debug("Balance request: {}", request);
             long userId = request.getUserId();
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -116,13 +129,17 @@ public class WalletService extends WalletServiceGrpc.WalletServiceImplBase {
             user.getAccounts()
                     .forEach(a -> responseBuilder.putMoneyAmount(a.getCurrencyCode(), a.getAmount().doubleValue()));
 
-            responseObserver.onNext(responseBuilder.build());
+            BalanceResponse response = responseBuilder.build();
+            LOGGER.info("Balance request '{}' successful. Result: {}.", request, response);
+            responseObserver.onNext(response);
             responseObserver.onCompleted();
         } catch (IllegalArgumentException | UserNotFoundException e) {
+            LOGGER.error("BalanceRequest request '" + request + "' failed", e);
             responseObserver.onError(Status.INVALID_ARGUMENT.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
         } catch (Exception e) {
+            LOGGER.error("BalanceRequest request '" + request + "' failed", e);
             responseObserver.onError(Status.UNKNOWN.withCause(e)
                     .withDescription(e.getMessage())
                     .asRuntimeException());
