@@ -11,7 +11,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
-    //todo: use map
     @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
     private Set<Account> accounts;
 

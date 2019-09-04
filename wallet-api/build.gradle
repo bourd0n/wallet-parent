@@ -1,8 +1,5 @@
 buildscript {
     repositories {
-        // maven {
-        //     url "http://nexus.sigma.sbrf.ru:8099/nexus/content/repositories/gradle_plugins_proxy"
-        // }
         mavenCentral()
     }
     dependencies {
@@ -27,9 +24,6 @@ configurations {
 }
 
 repositories {
-    // maven {
-    //     url "http://nexus.sigma.sbrf.ru:8099/nexus/content/repositories/gradle_plugins_proxy"
-    // }
     mavenCentral()
 }
 
@@ -65,7 +59,6 @@ protobuf {
         artifact = 'com.google.protobuf:protoc:3.9.1'
     }
 
-    //todo: remove from here
     // Configure the codegen plugins
     plugins {
         grpc {

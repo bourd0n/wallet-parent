@@ -5,8 +5,6 @@ plugins {
     id "com.google.protobuf" version "0.8.10"
 }
 
-
-
 group = 'com.bourd0n.wallet'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
@@ -18,9 +16,6 @@ configurations {
 }
 
 repositories {
-    // maven {
-    //     url "http://nexus.sigma.sbrf.ru:8099/nexus/content/repositories/gradle_plugins_proxy"
-    // }
     mavenCentral()
 }
 
@@ -31,9 +26,8 @@ ext {
 }
 
 
-//todo: clear dependencies
 dependencies {
-    compileOnly project(':wallet-api')
+    implementation project(':wallet-api')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -52,28 +46,16 @@ dependencies {
 //    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
 //    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
 
-    //jersey
-    implementation group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet-core', version: "${jerseyVersion}"
-    implementation group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: "${jerseyVersion}"
-    implementation group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: "${jerseyVersion}"
-//    providedCompile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
-    //dependency injection
-    implementation group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: "${jerseyVersion}"
-
     //hibernate
     implementation group: 'org.hibernate', name: 'hibernate-core', version: "${hibernateVersion}"
     implementation group: 'org.hibernate', name: 'hibernate-entitymanager', version: "${hibernateVersion}"
     //database
-
     implementation group: 'org.javamoney', name: 'moneta', version: '1.3'
     implementation group: 'com.google.code.findbugs', name: 'findbugs', version: '3.0.1'
 
     //tests
-//    testImplementation group: 'junit', name: 'junit', version: '4.12'
-    testImplementation group: 'org.glassfish.jersey.test-framework.providers', name: 'jersey-test-framework-provider-jetty',
-            version: "${jerseyVersion}"
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.11.1'
-
+    testImplementation group: 'io.grpc', name: 'grpc-testing', version: "${grpcVersion}"
 
     implementation group: 'io.grpc', name: 'grpc-netty', version: "${grpcVersion}"
     implementation group: 'io.grpc', name: 'grpc-protobuf', version: "${grpcVersion}"

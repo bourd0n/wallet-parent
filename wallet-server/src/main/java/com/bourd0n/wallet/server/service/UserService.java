@@ -36,7 +36,6 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
             Map<String, Double> moneyAmount = request.getMoneyAmount();
             User user = new User();
             Set<Account> accounts = moneyAmount.entrySet().stream()
-                    //todo: currency from double
                     .map(amountEntry -> new Account(user, amountEntry.getKey(), new BigDecimal(amountEntry.getValue())))
                     .collect(Collectors.toSet());
             user.setAccounts(accounts);
